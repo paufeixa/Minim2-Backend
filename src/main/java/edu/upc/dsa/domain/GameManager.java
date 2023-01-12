@@ -1,9 +1,6 @@
 package edu.upc.dsa.domain;
 
-import edu.upc.dsa.domain.entity.Characters;
-import edu.upc.dsa.domain.entity.MyObjects;
-import edu.upc.dsa.domain.entity.ObjectType;
-import edu.upc.dsa.domain.entity.User;
+import edu.upc.dsa.domain.entity.*;
 import edu.upc.dsa.domain.entity.exceptions.NotEnoughCoinsException;
 import edu.upc.dsa.domain.entity.exceptions.UserAlreadyExistsException;
 import edu.upc.dsa.domain.entity.vo.Credentials;
@@ -11,6 +8,10 @@ import edu.upc.dsa.domain.entity.vo.Credentials;
 import java.util.List;
 
 public interface GameManager {
+    /**FAQs*/
+    public void addFaqs(Faqs faqs);
+    public List<Faqs> getFaqs();
+
     /**User*/
     public int numUsers();
     public void registerUser(String userName, String userSurname, String birthDate, String email, String password) throws UserAlreadyExistsException;

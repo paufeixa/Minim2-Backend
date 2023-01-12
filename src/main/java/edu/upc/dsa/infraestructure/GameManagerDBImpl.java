@@ -1,10 +1,7 @@
 package edu.upc.dsa.infraestructure;
 
 import edu.upc.dsa.domain.GameManager;
-import edu.upc.dsa.domain.entity.Characters;
-import edu.upc.dsa.domain.entity.MyObjects;
-import edu.upc.dsa.domain.entity.ObjectType;
-import edu.upc.dsa.domain.entity.User;
+import edu.upc.dsa.domain.entity.*;
 import edu.upc.dsa.domain.entity.exceptions.NotEnoughCoinsException;
 import edu.upc.dsa.domain.entity.exceptions.UserAlreadyExistsException;
 import edu.upc.dsa.domain.entity.vo.Credentials;
@@ -18,17 +15,31 @@ import java.util.List;
 
 public class GameManagerDBImpl implements GameManager {
     Session session;
+    ArrayList<Faqs> faqsList;
     private static GameManager instance;
 
     final static Logger logger = Logger.getLogger(GameManagerDBImpl.class);
 
     public GameManagerDBImpl(){
         this.session = FactorySession.openSession("jdbc:mariadb://localhost:3306/dsa","root", "Mazinger72");
+        faqsList = new ArrayList<>();
     }
 
     public static GameManager getInstance() {
         if (instance == null) instance = new GameManagerDBImpl();
         return instance;
+    }
+
+    @Override
+    public void addFaqs(Faqs faqs) {
+        logger.info("New FAQ added. Question:" + faqs.getQuestion() + " Answer: " + faqs.getAnswer());
+        faqsList.add(faqs);
+    }
+
+    @Override
+    public List<Faqs> getFaqs() {
+        logger.info("All the " + faqsList.size() + " FAQs have been returned");
+        return faqsList;
     }
 
     @Override

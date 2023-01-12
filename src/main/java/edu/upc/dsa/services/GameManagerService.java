@@ -1,15 +1,12 @@
 package edu.upc.dsa.services;
 
 import edu.upc.dsa.domain.GameManager;
-import edu.upc.dsa.domain.entity.Characters;
-import edu.upc.dsa.domain.entity.MyObjects;
-import edu.upc.dsa.domain.entity.User;
+import edu.upc.dsa.domain.entity.*;
 import edu.upc.dsa.domain.entity.exceptions.NotEnoughCoinsException;
 import edu.upc.dsa.domain.entity.exceptions.UserAlreadyExistsException;
 import edu.upc.dsa.domain.entity.to.Coins;
 import edu.upc.dsa.domain.entity.to.UserRegister;
 import edu.upc.dsa.domain.entity.vo.Credentials;
-import edu.upc.dsa.domain.entity.ObjectType;
 import edu.upc.dsa.infraestructure.GameManagerDBImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,7 +26,61 @@ public class GameManagerService {
     private GameManager gameManager;
 
     public GameManagerService() {
+
         this.gameManager = GameManagerDBImpl.getInstance();
+        /**Listado de FAQs para no tener que añadirlas cada vez que se abre el servidor (con base de datos en el futuro)
+        Se podría hacer con un fichero de texto, pero se van a añadir aquí
+        Con esto ya se puede comprobar que las FAQs se pueden ver en la aplicación*/
+        if (this.gameManager.getFaqs().size()==0) {
+            Faqs faq1 = new Faqs("¿Cómo se pasa el minijuego Empareja y Despeja?","Juntando parejas en horizontal, vertical o diagonal hasta que no queden cartas");
+            this.gameManager.addFaqs(faq1);
+            Faqs faq2 = new Faqs("¿Tiene el juego alguna clase de puntuación?","Todavía no");
+            this.gameManager.addFaqs(faq2);
+            Faqs faq3 = new Faqs("¿Cuántos minijuegos hay?","En total hay 10 minijuegos");
+            this.gameManager.addFaqs(faq3);
+            Faqs faq4 = new Faqs("¿Cuántos personajes hay?","En total hay 15 personajes");
+            this.gameManager.addFaqs(faq4);
+            Faqs faq5 = new Faqs("¿Cuántos minijuegos hay en cada mapa?","Hay 5 minijuegos por mapa");
+            this.gameManager.addFaqs(faq5);
+            Faqs faq6 = new Faqs("¿Habrá nuevos personajes?","De momento, no se ha planeado ampliar el número de personajes, pero podrían crearse más en futuras actualizaciones");
+            this.gameManager.addFaqs(faq6);
+            Faqs faq7 = new Faqs("¿Habrá nuevos objetos?","De momento, no se ha planeado ampliar el número de objetos, pero podrían crearse más en futuras actualizaciones");
+            this.gameManager.addFaqs(faq7);
+            Faqs faq8 = new Faqs("¿Quién ha creado el juego?","El juego está creado por 4 estudiantes de DSA de la EETAC: Anna, Itziar, Lluc, Óscar y Pau");
+            this.gameManager.addFaqs(faq8);
+            Faqs faq9 = new Faqs("¿Cómo se pueden obtener monedas?","Las monedas se obtienen jugando y ganando en los distintos minijuegos");
+            this.gameManager.addFaqs(faq9);
+        }
+    }
+
+    @POST
+    @ApiOperation(value = "add a FAQ", notes = "Adds a new FAQ and the answer")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful"),
+            @ApiResponse(code = 500, message = "Missing Information")
+    })
+    @Path("/FAQs")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addFaqs(Faqs faqs) {
+        if (faqs.getQuestion() == null || faqs.getAnswer() == null) {
+            return Response.status(500).build();
+        }
+        this.gameManager.addFaqs(faqs);
+        return Response.status(200).build();
+    }
+
+    @GET
+    @ApiOperation(value = "get all FAQs", notes = "Gets all the FAQs that are created")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful", response = Faqs.class, responseContainer = "List"),
+    })
+    @Path("/FAQs")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFaqs() {
+        List<Faqs> faqs = this.gameManager.getFaqs();
+        GenericEntity<List<Faqs>> entity = new GenericEntity<List<Faqs>>(faqs) {
+        };
+        return Response.status(200).entity(entity).build();
     }
 
     @POST
